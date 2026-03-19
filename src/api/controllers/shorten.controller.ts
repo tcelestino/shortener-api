@@ -32,41 +32,41 @@ export class ShortenController {
     return this.shortenService.create(createShortDto);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a short URL by ID' })
+  @Get(':shortCode')
+  @ApiOperation({ summary: 'Get a short URL by short code' })
   @ApiResponse({ status: HttpStatus.OK, type: Short })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getShortById(@Param('id') id: string): Promise<Short> {
-    return this.shortenService.getById(id);
+  async getShortById(@Param('shortCode') shortCode: string): Promise<Short> {
+    return this.shortenService.getById(shortCode);
   }
 
-  @Put(':id')
-  @ApiOperation({ summary: 'Update a short URL by ID' })
+  @Put(':shortCode')
+  @ApiOperation({ summary: 'Update a short URL by short code' })
   @ApiBody({ type: UpdateShortDTO })
   @ApiResponse({ status: HttpStatus.OK, type: Short })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST })
   async updateShort(
-    @Param('id') id: string,
+    @Param('shortCode') shortCode: string,
     @Body() updateShortDto: UpdateShortDTO,
   ): Promise<Short> {
-    return this.shortenService.update(id, updateShortDto);
+    return this.shortenService.update(shortCode, updateShortDto);
   }
 
-  @Delete(':id')
+  @Delete(':shortCode')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a short URL by ID' })
+  @ApiOperation({ summary: 'Delete a short URL by short code' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async deleteShort(@Param('id') id: string): Promise<void> {
-    return this.shortenService.delete(id);
+  async deleteShort(@Param('shortCode') shortCode: string): Promise<void> {
+    return this.shortenService.delete(shortCode);
   }
 
-  @Get(':id/stats')
-  @ApiOperation({ summary: 'Get stats for a short URL by ID' })
+  @Get(':shortCode/stats')
+  @ApiOperation({ summary: 'Get stats for a short URL by short code' })
   @ApiResponse({ status: HttpStatus.OK, type: Short })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getStatsById(@Param('id') id: string): Promise<Short> {
-    return this.shortenService.getStatsById(id);
+  async getStatsById(@Param('shortCode') shortCode: string): Promise<Short> {
+    return this.shortenService.getStatsById(shortCode);
   }
 }

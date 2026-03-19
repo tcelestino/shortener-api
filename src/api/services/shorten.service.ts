@@ -21,7 +21,7 @@ export class ShortenService {
   async getById(id: string): Promise<Short> {
     const short = await this.shortenRepository.findOneAndIncrementAccess(id);
     if (!short) {
-      throw new NotFoundException(`Short url with id ${id} not found`);
+      throw new NotFoundException(`Short url with shortCode ${id} not found`);
     }
     const { accessCount: _, ...result } = short;
     return result;
@@ -30,7 +30,7 @@ export class ShortenService {
   async update(id: string, updateShortDto: UpdateShortDTO): Promise<Short> {
     const updatedShort = await this.shortenRepository.update(id, updateShortDto);
     if (!updatedShort) {
-      throw new NotFoundException(`Short url with id ${id} not found`);
+      throw new NotFoundException(`Short url with shortCode ${id} not found`);
     }
     const { accessCount: _, ...result } = updatedShort;
     return result;
@@ -39,14 +39,14 @@ export class ShortenService {
   async delete(id: string): Promise<void> {
     const deleted = await this.shortenRepository.remove(id);
     if (!deleted) {
-      throw new NotFoundException(`Short url with id ${id} not found`);
+      throw new NotFoundException(`Short url with shortCode ${id} not found`);
     }
   }
 
   async getStatsById(id: string): Promise<Short> {
     const statsShort = await this.shortenRepository.findOne(id);
     if (!statsShort) {
-      throw new NotFoundException(`Short url with id ${id} not found`);
+      throw new NotFoundException(`Short url with shortCode ${id} not found`);
     }
     return statsShort;
   }
