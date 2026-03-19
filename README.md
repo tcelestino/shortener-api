@@ -23,10 +23,14 @@ shortener-api/
 │       ├── controllers/
 │       │   └── shorten.controller.ts # API request handling layer
 │       └── shorten.module.ts         # Shorten module configuration
+├── test/
+│   ├── e2e/                       # End-to-end tests
+│   └── integration/               # Integration tests
 ├── prisma/
 │   └── schema.prisma              # Prisma schema (Short model)
 ├── generated/
 │   └── prisma/                    # Prisma generated client
+├── prisma.config.ts               # Prisma configuration
 ├── package.json                   # Project dependencies
 ├── tsconfig.json                  # TypeScript configuration
 ├── docker-compose.yml             # Docker compose all services (API + PostgreSQL)
@@ -65,10 +69,15 @@ shortener-api/
 Prisma model (`prisma/schema.prisma`):
 
 ```prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
 model Short {
   id          Int      @id @default(autoincrement())
   url         String
-  shortCode   String   @unique @default(uuid())
+  shortCode   String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   accessCount Int      @default(0)
@@ -190,6 +199,7 @@ The API will be available at `http://localhost:3000` and PostgreSQL at `localhos
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:cov` - Run tests with coverage
 - `npm run test:e2e` - Run end-to-end tests
+- `npm run test:integration` - Run integration tests
 
 ### Code Quality
 - `npm run lint` - Run ESLint with auto-fix
