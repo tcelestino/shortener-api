@@ -64,12 +64,6 @@ describe('ShortenService', () => {
         url: 'https://example.com',
       });
     });
-
-    it('should throw an error if url is empty', async () => {
-      await expect(service.create({ url: '' })).rejects.toThrow(
-        'URL is required',
-      );
-    });
   });
 
   describe('getById', () => {

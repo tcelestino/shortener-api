@@ -12,49 +12,55 @@ export class ShortenService {
   constructor(private readonly shortenRepository: ShortenRepository) {}
 
   async create(createShortDto: CreateShortDTO): Promise<ShortResponse> {
-    if (!createShortDto.url || createShortDto.url.trim() === '') {
-      throw new Error('URL is required');
-    }
     const { accessCount: _, ...result } =
       await this.shortenRepository.create(createShortDto);
     return result;
   }
 
-  async getById(id: string): Promise<ShortResponse> {
-    const short = await this.shortenRepository.findOneAndIncrementAccess(id);
+  async getById(shortCode: string): Promise<ShortResponse> {
+    const short =
+      await this.shortenRepository.findOneAndIncrementAccess(shortCode);
     if (!short) {
-      throw new NotFoundException(`Short url with shortCode ${id} not found`);
+      throw new NotFoundException(
+        `Short url with shortCode ${shortCode} not found`,
+      );
     }
     const { accessCount: _, ...result } = short;
     return result;
   }
 
   async update(
-    id: string,
+    shortCode: string,
     updateShortDto: UpdateShortDTO,
   ): Promise<ShortResponse> {
     const updatedShort = await this.shortenRepository.update(
-      id,
+      shortCode,
       updateShortDto,
     );
     if (!updatedShort) {
-      throw new NotFoundException(`Short url with shortCode ${id} not found`);
+      throw new NotFoundException(
+        `Short url with shortCode ${shortCode} not found`,
+      );
     }
     const { accessCount: _, ...result } = updatedShort;
     return result;
   }
 
-  async delete(id: string): Promise<void> {
-    const deleted = await this.shortenRepository.remove(id);
+  async delete(shortCode: string): Promise<void> {
+    const deleted = await this.shortenRepository.remove(shortCode);
     if (!deleted) {
-      throw new NotFoundException(`Short url with shortCode ${id} not found`);
+      throw new NotFoundException(
+        `Short url with shortCode ${shortCode} not found`,
+      );
     }
   }
 
-  async getStatsById(id: string): Promise<Short> {
-    const statsShort = await this.shortenRepository.findOne(id);
+  async getStatsById(shortCode: string): Promise<Short> {
+    const statsShort = await this.shortenRepository.findOne(shortCode);
     if (!statsShort) {
-      throw new NotFoundException(`Short url with shortCode ${id} not found`);
+      throw new NotFoundException(
+        `Short url with shortCode ${shortCode} not found`,
+      );
     }
     return statsShort;
   }
