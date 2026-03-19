@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { randomBytes } from 'crypto';
 import { PrismaService } from '../infra/prisma.service';
 import {
   Short,
@@ -32,7 +33,7 @@ export class ShortenRepository {
 
   async create(createShortDto: CreateShortDTO): Promise<Short> {
     const record = await this.prisma.short.create({
-      data: { url: createShortDto.url },
+      data: { url: createShortDto.url, shortCode: this.generateShortCode() },
     });
     return this.toEntity(record);
   }
@@ -79,5 +80,13 @@ export class ShortenRepository {
       updatedAt: record.updatedAt,
       accessCount: record.accessCount,
     };
+  }
+
+  private generateShortCode(): string {
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from(randomBytes(6))
+      .map((byte) => chars[byte % chars.length])
+      .join('');
   }
 }
