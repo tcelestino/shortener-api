@@ -13,6 +13,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { ShortenService } from '../services/shorten.service';
 import {
   Short,
+  ShortResponse,
   CreateShortDTO,
   UpdateShortDTO,
 } from '../entities/short.entity';
@@ -26,30 +27,42 @@ export class ShortenController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new short URL' })
   @ApiBody({ type: CreateShortDTO })
-  @ApiResponse({ status: HttpStatus.CREATED, type: Short })
+  @ApiResponse({ status: HttpStatus.CREATED, type: ShortResponse })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST })
-  async createShort(@Body() createShortDto: CreateShortDTO): Promise<Short> {
+  async createShort(
+    @Body() createShortDto: CreateShortDTO,
+  ): Promise<ShortResponse> {
     return this.shortenService.create(createShortDto);
   }
 
   @Get(':shortCode')
   @ApiOperation({ summary: 'Get a short URL by short code' })
+  @ApiResponse({ status: HttpStatus.OK, type: ShortResponse })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND })
+  async getShortById(
+    @Param('shortCode') shortCode: string,
+  ): Promise<ShortResponse> {
+    return this.shortenService.getById(shortCode);
+  }
+
+  @Get(':shortCode/stats')
+  @ApiOperation({ summary: 'Get stats for a short URL by short code' })
   @ApiResponse({ status: HttpStatus.OK, type: Short })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getShortById(@Param('shortCode') shortCode: string): Promise<Short> {
-    return this.shortenService.getById(shortCode);
+  async getStatsById(@Param('shortCode') shortCode: string): Promise<Short> {
+    return this.shortenService.getStatsById(shortCode);
   }
 
   @Put(':shortCode')
   @ApiOperation({ summary: 'Update a short URL by short code' })
   @ApiBody({ type: UpdateShortDTO })
-  @ApiResponse({ status: HttpStatus.OK, type: Short })
+  @ApiResponse({ status: HttpStatus.OK, type: ShortResponse })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST })
   async updateShort(
     @Param('shortCode') shortCode: string,
     @Body() updateShortDto: UpdateShortDTO,
-  ): Promise<Short> {
+  ): Promise<ShortResponse> {
     return this.shortenService.update(shortCode, updateShortDto);
   }
 
@@ -60,13 +73,5 @@ export class ShortenController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
   async deleteShort(@Param('shortCode') shortCode: string): Promise<void> {
     return this.shortenService.delete(shortCode);
-  }
-
-  @Get(':shortCode/stats')
-  @ApiOperation({ summary: 'Get stats for a short URL by short code' })
-  @ApiResponse({ status: HttpStatus.OK, type: Short })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getStatsById(@Param('shortCode') shortCode: string): Promise<Short> {
-    return this.shortenService.getStatsById(shortCode);
   }
 }

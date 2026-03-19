@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../infra/prisma.service';
-import { Short, CreateShortDTO, UpdateShortDTO } from '../entities/short.entity';
+import {
+  Short,
+  CreateShortDTO,
+  UpdateShortDTO,
+} from '../entities/short.entity';
 
 @Injectable()
 export class ShortenRepository {
@@ -33,7 +37,10 @@ export class ShortenRepository {
     return this.toEntity(record);
   }
 
-  async update(id: string, updateShortDto: UpdateShortDTO): Promise<Short | null> {
+  async update(
+    id: string,
+    updateShortDto: UpdateShortDTO,
+  ): Promise<Short | null> {
     try {
       const record = await this.prisma.short.update({
         where: { shortCode: id },

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   Short,
+  ShortResponse,
   CreateShortDTO,
   UpdateShortDTO,
 } from '../entities/short.entity';
@@ -10,15 +11,16 @@ import { ShortenRepository } from '../repositories/shorten.repository';
 export class ShortenService {
   constructor(private readonly shortenRepository: ShortenRepository) {}
 
-  async create(createShortDto: CreateShortDTO): Promise<Short> {
+  async create(createShortDto: CreateShortDTO): Promise<ShortResponse> {
     if (!createShortDto.url || createShortDto.url.trim() === '') {
       throw new Error('URL is required');
     }
-    const { accessCount: _, ...result } = await this.shortenRepository.create(createShortDto);
+    const { accessCount: _, ...result } =
+      await this.shortenRepository.create(createShortDto);
     return result;
   }
 
-  async getById(id: string): Promise<Short> {
+  async getById(id: string): Promise<ShortResponse> {
     const short = await this.shortenRepository.findOneAndIncrementAccess(id);
     if (!short) {
       throw new NotFoundException(`Short url with shortCode ${id} not found`);
@@ -27,8 +29,14 @@ export class ShortenService {
     return result;
   }
 
-  async update(id: string, updateShortDto: UpdateShortDTO): Promise<Short> {
-    const updatedShort = await this.shortenRepository.update(id, updateShortDto);
+  async update(
+    id: string,
+    updateShortDto: UpdateShortDTO,
+  ): Promise<ShortResponse> {
+    const updatedShort = await this.shortenRepository.update(
+      id,
+      updateShortDto,
+    );
     if (!updatedShort) {
       throw new NotFoundException(`Short url with shortCode ${id} not found`);
     }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class Short {
+export class ShortResponse {
   @ApiProperty({
     description: 'The unique identifier of the short URL',
     example: '1',
@@ -31,15 +31,15 @@ export class Short {
     example: '2025-05-02T00:00:00Z',
   })
   updatedAt: Date;
+}
 
+export class Short extends ShortResponse {
   @ApiProperty({
     description: 'The number of times the URL has been accessed',
-    required: false,
-    example: 100,
+    example: 0,
   })
-  @IsOptional()
   @IsNumber()
-  accessCount?: number;
+  accessCount: number;
 }
 
 export class CreateShortDTO {
