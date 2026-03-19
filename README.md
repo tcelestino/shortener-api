@@ -19,10 +19,13 @@ url-short-api/
 │       ├── controllers/
 │       │   └── shorten.controller.ts # API request handling layer
 │       └── shorten.module.ts         # Shorten module configuration
-├── package.json                   # Project dependencies
-├── tsconfig.json                  # TypeScript configuration
-├── nest-cli.json                  # NestJS CLI configuration
-└── README.md                      # Project documentation
+├── package.json                      # Project dependencies
+├── tsconfig.json                    # TypeScript configuration
+├── docker-compose.yml               # Docker compose all services (API + PostgreSQL)
+├── docker-compose.dependencies.yml  # Docker compose services (PostgreSQL)
+├── Dockerfile                       # Docker container
+├── nest-cli.json                   # NestJS CLI configuration
+└── README.md                       # Project documentation
 ```
 
 ## Architecture Layers
@@ -99,17 +102,36 @@ curl -X GET http://localhost:3000/shorten/1/stats \
 
 ## Installation and Setup
 
+Copy the environment file and adjust the values if needed:
+```bash
+cp .env.example .env
+```
+
+### Local
+
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the application in development mode:
+2. Start service dependencies (PostgreSQL):
+```bash
+docker-compose -f docker-compose.dependencies.yml up -d
+```
+
+3. Start the application in development mode:
 ```bash
 npm run start:dev
 ```
 
-3. The application will be available at `http://localhost:3000`
+### Docker
+
+1. Build and start all services (API + PostgreSQL):
+```bash
+docker compose up --build
+```
+
+The API will be available at `http://localhost:3000` and PostgreSQL at `localhost:5432`.
 
 ## Available Scripts
 
