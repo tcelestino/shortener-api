@@ -1,44 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Short,
-  CreateShortDTO,
-  UpdateShortDTO,
-} from '../entities/short.entity';
+import { PrismaService } from '../infra/prisma.service';
+import { Short, CreateShortDTO, UpdateShortDTO } from '../entities/short.entity';
 
 @Injectable()
 export class ShortenRepository {
-  findOne(id: string): Short | undefined {
-    return {
-      id,
-      url: 'url',
-      shortCode: 'uuid',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findOne(id: string): Promise<Short | null> {
+    const record = await this.prisma.short.findUnique({
+      where: { id: parseInt(id, 10) },
+    });
+    if (!record) return null;
+    return this.toEntity(record);
   }
 
-  create(createShortDto: CreateShortDTO): Short {
-    return {
-      id: 'uuid',
-      url: createShortDto.url,
-      shortCode: 'uuid',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  async create(createShortDto: CreateShortDTO): Promise<Short> {
+    const record = await this.prisma.short.create({
+      data: { url: createShortDto.url },
+    });
+    return this.toEntity(record);
   }
 
-  update(id: string, updateShortDto: UpdateShortDTO): Short | undefined {
-    return {
-      id,
-      url: updateShortDto.url,
-      shortCode: 'uuid',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  async update(id: string, updateShortDto: UpdateShortDTO): Promise<Short | null> {
+    try {
+      const record = await this.prisma.short.update({
+        where: { id: parseInt(id, 10) },
+        data: { url: updateShortDto.url, updatedAt: new Date() },
+      });
+      return this.toEntity(record);
+    } catch {
+      return null;
+    }
   }
 
-  remove(id: string): boolean | undefined {
-    console.log(id);
-    return true;
+  async remove(id: string): Promise<boolean> {
+    try {
+      await this.prisma.short.delete({
+        where: { id: parseInt(id, 10) },
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private toEntity(record: {
+    id: number;
+    url: string;
+    shortCode: string;
+    createdAt: Date;
+    updatedAt: Date;
+    accessCount: number;
+  }): Short {
+    return {
+      id: record.id.toString(),
+      url: record.url,
+      shortCode: record.shortCode,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      accessCount: record.accessCount,
+    };
   }
 }
