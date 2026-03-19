@@ -16,8 +16,17 @@ describe('ShortenService', () => {
     accessCount: 0,
   };
 
+  const mockShortWithoutAccessCount = {
+    id: '1',
+    url: 'https://example.com',
+    shortCode: 'abc123',
+    createdAt: mockShort.createdAt,
+    updatedAt: mockShort.updatedAt,
+  };
+
   const mockShortenRepository = {
     findOne: jest.fn(),
+    findOneAndIncrementAccess: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
@@ -46,67 +55,82 @@ describe('ShortenService', () => {
   });
 
   describe('create', () => {
-    it('deve criar um short com url valida', async () => {
+    it('should create a short without accessCount', async () => {
       mockShortenRepository.create.mockResolvedValue(mockShort);
       const result = await service.create({ url: 'https://example.com' });
-      expect(result).toEqual(mockShort);
-      expect(mockShortenRepository.create).toHaveBeenCalledWith({ url: 'https://example.com' });
+      expect(result).toEqual(mockShortWithoutAccessCount);
+      expect(result).not.toHaveProperty('accessCount');
+      expect(mockShortenRepository.create).toHaveBeenCalledWith({
+        url: 'https://example.com',
+      });
     });
 
-    it('deve lancar erro se url estiver vazia', async () => {
-      await expect(service.create({ url: '' })).rejects.toThrow('URL is required');
+    it('should throw an error if url is empty', async () => {
+      await expect(service.create({ url: '' })).rejects.toThrow(
+        'URL is required',
+      );
     });
   });
 
   describe('getById', () => {
-    it('deve retornar o short pelo id', async () => {
-      mockShortenRepository.findOne.mockResolvedValue(mockShort);
+    it('should return the short without accessCount', async () => {
+      mockShortenRepository.findOneAndIncrementAccess.mockResolvedValue(
+        mockShort,
+      );
       const result = await service.getById('1');
-      expect(result).toEqual(mockShort);
-      expect(mockShortenRepository.findOne).toHaveBeenCalledWith('1');
+      expect(result).toEqual(mockShortWithoutAccessCount);
+      expect(result).not.toHaveProperty('accessCount');
+      expect(
+        mockShortenRepository.findOneAndIncrementAccess,
+      ).toHaveBeenCalledWith('1');
     });
 
-    it('deve lancar NotFoundException se nao encontrar', async () => {
-      mockShortenRepository.findOne.mockResolvedValue(null);
+    it('should throw NotFoundException if not found', async () => {
+      mockShortenRepository.findOneAndIncrementAccess.mockResolvedValue(null);
       await expect(service.getById('99')).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update', () => {
-    it('deve atualizar o short', async () => {
+    it('should update the short without accessCount', async () => {
       mockShortenRepository.update.mockResolvedValue(mockShort);
       const result = await service.update('1', { url: 'https://updated.com' });
-      expect(result).toEqual(mockShort);
+      expect(result).toEqual(mockShortWithoutAccessCount);
+      expect(result).not.toHaveProperty('accessCount');
     });
 
-    it('deve lancar NotFoundException se nao encontrar', async () => {
+    it('should throw NotFoundException if not found', async () => {
       mockShortenRepository.update.mockResolvedValue(null);
-      await expect(service.update('99', { url: 'https://updated.com' })).rejects.toThrow(NotFoundException);
+      await expect(
+        service.update('99', { url: 'https://updated.com' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('delete', () => {
-    it('deve deletar o short', async () => {
+    it('should delete the short', async () => {
       mockShortenRepository.remove.mockResolvedValue(true);
       await expect(service.delete('1')).resolves.toBeUndefined();
     });
 
-    it('deve lancar NotFoundException se nao encontrar', async () => {
+    it('should throw NotFoundException if not found', async () => {
       mockShortenRepository.remove.mockResolvedValue(false);
       await expect(service.delete('99')).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('getStatsById', () => {
-    it('deve retornar stats do short', async () => {
+    it('should return stats for the short', async () => {
       mockShortenRepository.findOne.mockResolvedValue(mockShort);
       const result = await service.getStatsById('1');
       expect(result).toEqual(mockShort);
     });
 
-    it('deve lancar NotFoundException se nao encontrar', async () => {
+    it('should throw NotFoundException if not found', async () => {
       mockShortenRepository.findOne.mockResolvedValue(null);
-      await expect(service.getStatsById('99')).rejects.toThrow(NotFoundException);
+      await expect(service.getStatsById('99')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
