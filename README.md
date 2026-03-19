@@ -12,6 +12,8 @@ url-short-api/
 │   └── api/                      # Api domain module
 │       ├── entities/
 │       │   └── short.entity.ts     # Short entity and DTOs
+│       ├── infra/
+│       │   └── database.ts         # Prisma client setup
 │       ├── repositories/
 │       │   └── shorten.repository.ts # Data access layer
 │       ├── services/
@@ -19,13 +21,17 @@ url-short-api/
 │       ├── controllers/
 │       │   └── shorten.controller.ts # API request handling layer
 │       └── shorten.module.ts         # Shorten module configuration
-├── package.json                      # Project dependencies
-├── tsconfig.json                    # TypeScript configuration
-├── docker-compose.yml               # Docker compose all services (API + PostgreSQL)
-├── docker-compose.dependencies.yml  # Docker compose services (PostgreSQL)
-├── Dockerfile                       # Docker container
-├── nest-cli.json                   # NestJS CLI configuration
-└── README.md                       # Project documentation
+├── prisma/
+│   └── schema.prisma              # Prisma schema (Short model)
+├── generated/
+│   └── prisma/                    # Prisma generated client
+├── package.json                   # Project dependencies
+├── tsconfig.json                  # TypeScript configuration
+├── docker-compose.yml             # Docker compose all services (API + PostgreSQL)
+├── docker-compose.dependencies.yml # Docker compose services (PostgreSQL)
+├── Dockerfile                     # Docker container
+├── nest-cli.json                  # NestJS CLI configuration
+└── README.md                      # Project documentation
 ```
 
 ## Architecture Layers
@@ -34,22 +40,40 @@ url-short-api/
 - Defines the Short interface and Data Transfer Objects (DTOs)
 - Contains data structure definitions
 
-### 2. **Repository Layer** (`shorten.repository.ts`)
+### 2. **Infrastructure Layer** (`infra/database.ts`)
+- Initializes and exports the Prisma client
+- Uses `@prisma/adapter-pg` for PostgreSQL connection via `DATABASE_URL`
+
+### 3. **Repository Layer** (`shorten.repository.ts`)
 - Handles data persistence and retrieval
-- Manages JSON file operations
 - Implements CRUD operations
 
-### 3. **Service Layer** (`shorten.service.ts`)
+### 4. **Service Layer** (`shorten.service.ts`)
 - Contains business logic
 - Validates data and enforces business rules
 - Acts as an intermediary between controller and repository
 
-### 4. **Controller Layer** (`shorten.controller.ts`)
+### 5. **Controller Layer** (`shorten.controller.ts`)
 - Handles HTTP requests and responses
 - Defines API endpoints and routing
 - Validates input parameters
 
 ## Short Entity
+
+Prisma model (`prisma/schema.prisma`):
+
+```prisma
+model Short {
+  id          Int      @id @default(autoincrement())
+  url         String
+  shortCode   String   @unique @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  accessCount Int      @default(0)
+}
+```
+
+TypeScript interface:
 
 ```typescript
 interface Short {
@@ -97,7 +121,7 @@ curl -X DELETE http://localhost:3000/shorten/1
 
 ### Get a short stats
 ```bash
-curl -X GET http://localhost:3000/shorten/1/stats \
+curl -X GET http://localhost:3000/shorten/1/stats
 ```
 
 ## Installation and Setup
@@ -119,7 +143,12 @@ npm install
 docker-compose -f docker-compose.dependencies.yml up -d
 ```
 
-3. Start the application in development mode:
+3. Run database migrations:
+```bash
+npm run prisma:migrate
+```
+
+4. Start the application in development mode:
 ```bash
 npm run start:dev
 ```
@@ -135,10 +164,24 @@ The API will be available at `http://localhost:3000` and PostgreSQL at `localhos
 
 ## Available Scripts
 
+### Application
 - `npm run start` - Start the application
 - `npm run start:dev` - Start in development mode with hot reload
 - `npm run start:debug` - Start in debug mode
 - `npm run build` - Build the application
+
+### Prisma
+- `npm run prisma:migrate` - Run database migrations (dev)
+- `npm run prisma:generate` - Generate Prisma client
+- `npm run prisma:reset` - Reset database and re-run migrations
+- `npm run prisma:studio` - Open Prisma Studio (database GUI)
+
+### Tests
 - `npm run test` - Run unit tests
-- `npm run lint` - Run ESLint
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:cov` - Run tests with coverage
+- `npm run test:e2e` - Run end-to-end tests
+
+### Code Quality
+- `npm run lint` - Run ESLint with auto-fix
 - `npm run format` - Format code with Prettier
