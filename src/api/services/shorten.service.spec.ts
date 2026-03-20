@@ -71,24 +71,28 @@ describe('ShortenService', () => {
       mockShortenRepository.findOneAndIncrementAccess.mockResolvedValue(
         mockShort,
       );
-      const result = await service.getById('1');
+      const result = await service.getShortByCode('abc123');
       expect(result).toEqual(mockShortWithoutAccessCount);
       expect(result).not.toHaveProperty('accessCount');
       expect(
         mockShortenRepository.findOneAndIncrementAccess,
-      ).toHaveBeenCalledWith('1');
+      ).toHaveBeenCalledWith('abc123');
     });
 
     it('should throw NotFoundException if not found', async () => {
       mockShortenRepository.findOneAndIncrementAccess.mockResolvedValue(null);
-      await expect(service.getById('99')).rejects.toThrow(NotFoundException);
+      await expect(service.getShortByCode('99')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('update', () => {
     it('should update the short without accessCount', async () => {
       mockShortenRepository.update.mockResolvedValue(mockShort);
-      const result = await service.update('1', { url: 'https://updated.com' });
+      const result = await service.update('abc123', {
+        url: 'https://updated.com',
+      });
       expect(result).toEqual(mockShortWithoutAccessCount);
       expect(result).not.toHaveProperty('accessCount');
     });
@@ -104,7 +108,7 @@ describe('ShortenService', () => {
   describe('delete', () => {
     it('should delete the short', async () => {
       mockShortenRepository.remove.mockResolvedValue(true);
-      await expect(service.delete('1')).resolves.toBeUndefined();
+      await expect(service.delete('abc123')).resolves.toBeUndefined();
     });
 
     it('should throw NotFoundException if not found', async () => {
@@ -113,16 +117,16 @@ describe('ShortenService', () => {
     });
   });
 
-  describe('getStatsById', () => {
+  describe('getStatsByCode', () => {
     it('should return stats for the short', async () => {
       mockShortenRepository.findOne.mockResolvedValue(mockShort);
-      const result = await service.getStatsById('1');
+      const result = await service.getStatsByCode('abc123');
       expect(result).toEqual(mockShort);
     });
 
     it('should throw NotFoundException if not found', async () => {
       mockShortenRepository.findOne.mockResolvedValue(null);
-      await expect(service.getStatsById('99')).rejects.toThrow(
+      await expect(service.getStatsByCode('abc123')).rejects.toThrow(
         NotFoundException,
       );
     });

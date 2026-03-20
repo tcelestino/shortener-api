@@ -18,7 +18,7 @@ export class ShortenService {
     return result;
   }
 
-  async getById(shortCode: string): Promise<ShortResponse> {
+  async getShortByCode(shortCode: string): Promise<ShortResponse> {
     const short =
       await this.shortenRepository.findOneAndIncrementAccess(shortCode);
     if (!short) {
@@ -56,7 +56,7 @@ export class ShortenService {
     }
   }
 
-  async getStatsById(shortCode: string): Promise<Short> {
+  async getStatsByCode(shortCode: string): Promise<Short> {
     const statsShort = await this.shortenRepository.findOne(shortCode);
     if (!statsShort) {
       throw new NotFoundException(

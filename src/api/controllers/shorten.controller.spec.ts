@@ -25,8 +25,8 @@ describe('ShortenController', () => {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
-            getById: jest.fn(),
-            getStatsById: jest.fn(),
+            getShortByCode: jest.fn(),
+            getStatsByCode: jest.fn(),
           },
         },
       ],
@@ -62,71 +62,77 @@ describe('ShortenController', () => {
     });
   });
 
-  describe('getShortById', () => {
+  describe('getShortByCode', () => {
     const shortCode = mockShortData.shortCode;
     it('should return a short', async () => {
-      jest.spyOn(service, 'getById').mockResolvedValue(mockShortData);
+      jest.spyOn(service, 'getShortByCode').mockResolvedValue(mockShortData);
 
-      const result = await controller.getShortById(shortCode);
+      const result = await controller.getShortByCode(shortCode);
 
       expect(result).toEqual(mockShortData);
-      expect(service.getById).toHaveBeenCalledWith(shortCode);
+      expect(service.getShortByCode).toHaveBeenCalledWith(shortCode);
     });
 
     it('should throw an error when short is not found', () => {
       jest
-        .spyOn(service, 'getById')
+        .spyOn(service, 'getShortByCode')
         .mockRejectedValue(
           new NotFoundException(
             `Short url with shortCode ${shortCode} not found`,
           ),
         );
 
-      expect(controller.getShortById(shortCode)).rejects.toThrow(
+      expect(controller.getShortByCode(shortCode)).rejects.toThrow(
         'Short url with shortCode abc123 not found',
       );
     });
 
     it('should throw an error when create is fail', () => {
-      jest.spyOn(service, 'getById').mockRejectedValue(new Error('Error'));
+      jest
+        .spyOn(service, 'getShortByCode')
+        .mockRejectedValue(new Error('Error'));
 
-      expect(controller.getShortById(shortCode)).rejects.toThrow('Error');
+      expect(controller.getShortByCode(shortCode)).rejects.toThrow('Error');
     });
   });
 
-  describe('getStatsById', () => {
+  describe('getStatsByCode', () => {
     const shortCode = mockShortData.shortCode;
     const mockShortStatsData = {
       ...mockShortData,
       accessCount: 0,
     };
     it('should return a short with accessCount', async () => {
-      jest.spyOn(service, 'getStatsById').mockResolvedValue(mockShortStatsData);
+      jest
+        .spyOn(service, 'getStatsByCode')
+        .mockResolvedValue(mockShortStatsData);
 
-      const result = await controller.getStatsById(shortCode);
+      const result = await controller.getStatsByCode(shortCode);
 
       expect(result).toEqual(mockShortStatsData);
-      expect(service.getStatsById).toHaveBeenCalledWith(shortCode);
+      expect(service.getStatsByCode).toHaveBeenCalledWith(shortCode);
     });
 
     it('should throw an error when short is not found', () => {
       jest
-        .spyOn(service, 'getStatsById')
+        .spyOn(service, 'getStatsByCode')
         .mockRejectedValue(
           new NotFoundException(
             `Short url with shortCode ${shortCode} not found`,
           ),
         );
 
-      expect(controller.getStatsById(shortCode)).rejects.toThrow(
+      expect(controller.getStatsByCode(shortCode)).rejects.toThrow(
         'Short url with shortCode abc123 not found',
       );
     });
 
     it('should throw an error when create is fail', () => {
-      jest.spyOn(service, 'getStatsById').mockRejectedValue(new Error('Error'));
+      jest
+        .spyOn(service, 'getStatsByCode')
+        .mockRejectedValue(new Error('Error'));
 
-      expect(controller.getStatsById(shortCode)).rejects.toThrow('Error');
+      expect(controller.getStatsByCode(shortCode)).rejects.toThrow('Error');
     });
   });
 

@@ -39,18 +39,18 @@ export class ShortenController {
   @ApiOperation({ summary: 'Get a short URL by short code' })
   @ApiResponse({ status: HttpStatus.OK, type: ShortResponse })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getShortById(
+  async getShortByCode(
     @Param('shortCode') shortCode: string,
   ): Promise<ShortResponse> {
-    return this.shortenService.getById(shortCode);
+    return this.shortenService.getShortByCode(shortCode);
   }
 
   @Get(':shortCode/stats')
   @ApiOperation({ summary: 'Get stats for a short URL by short code' })
   @ApiResponse({ status: HttpStatus.OK, type: Short })
   @ApiResponse({ status: HttpStatus.NOT_FOUND })
-  async getStatsById(@Param('shortCode') shortCode: string): Promise<Short> {
-    return this.shortenService.getStatsById(shortCode);
+  async getStatsByCode(@Param('shortCode') shortCode: string): Promise<Short> {
+    return this.shortenService.getStatsByCode(shortCode);
   }
 
   @Put(':shortCode')
