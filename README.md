@@ -27,12 +27,18 @@ npm install
 docker-compose -f docker-compose.dependencies.yml up -d
 ```
 
-3. Run database migrations:
+3. Run Prisma generate
+
+```bash
+npm run prisma:generate
+```
+
+4. Run database migrations:
 ```bash
 npm run prisma:migrate
 ```
 
-4. Start the application in development mode:
+5. Start the application in development mode:
 ```bash
 npm run start:dev
 ```
