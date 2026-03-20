@@ -55,7 +55,7 @@ describe('ShortenController', () => {
       expect(service.create).toHaveBeenCalledWith({ url });
     });
 
-    it('should throw an error when create is fail', async () => {
+    it('should throw an error when create is fail', () => {
       jest.spyOn(service, 'create').mockRejectedValue(new Error('Error'));
 
       expect(controller.createShort({ url })).rejects.toThrow('Error');
@@ -73,7 +73,7 @@ describe('ShortenController', () => {
       expect(service.getById).toHaveBeenCalledWith(shortCode);
     });
 
-    it('should throw an error when short is not found', async () => {
+    it('should throw an error when short is not found', () => {
       jest
         .spyOn(service, 'getById')
         .mockRejectedValue(
@@ -87,7 +87,7 @@ describe('ShortenController', () => {
       );
     });
 
-    it('should throw an error when create is fail', async () => {
+    it('should throw an error when create is fail', () => {
       jest.spyOn(service, 'getById').mockRejectedValue(new Error('Error'));
 
       expect(controller.getShortById(shortCode)).rejects.toThrow('Error');
@@ -109,7 +109,7 @@ describe('ShortenController', () => {
       expect(service.getStatsById).toHaveBeenCalledWith(shortCode);
     });
 
-    it('should throw an error when short is not found', async () => {
+    it('should throw an error when short is not found', () => {
       jest
         .spyOn(service, 'getStatsById')
         .mockRejectedValue(
@@ -123,7 +123,7 @@ describe('ShortenController', () => {
       );
     });
 
-    it('should throw an error when create is fail', async () => {
+    it('should throw an error when create is fail', () => {
       jest.spyOn(service, 'getStatsById').mockRejectedValue(new Error('Error'));
 
       expect(controller.getStatsById(shortCode)).rejects.toThrow('Error');
@@ -152,7 +152,7 @@ describe('ShortenController', () => {
       });
     });
 
-    it('should throw an error when short is not found', async () => {
+    it('should throw an error when short is not found', () => {
       jest
         .spyOn(service, 'update')
         .mockRejectedValue(
@@ -168,7 +168,7 @@ describe('ShortenController', () => {
       ).rejects.toThrow('Short url with shortCode abc123 not found');
     });
 
-    it('should throw an error when create is fail', async () => {
+    it('should throw an error when create is fail', () => {
       jest.spyOn(service, 'update').mockRejectedValue(new Error('Error'));
 
       expect(
@@ -190,7 +190,7 @@ describe('ShortenController', () => {
       expect(service.delete).toHaveBeenCalledWith(mockShortData.shortCode);
     });
 
-    it('should throw an error when short is not found', async () => {
+    it('should throw an error when short is not found', () => {
       jest
         .spyOn(service, 'delete')
         .mockRejectedValue(
@@ -204,7 +204,7 @@ describe('ShortenController', () => {
       );
     });
 
-    it('should throw an error when create is fail', async () => {
+    it('should throw an error when create is fail', () => {
       jest.spyOn(service, 'delete').mockRejectedValue(new Error('Error'));
 
       expect(controller.deleteShort(mockShortData.shortCode)).rejects.toThrow(

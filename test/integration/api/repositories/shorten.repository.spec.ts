@@ -89,8 +89,7 @@ describe('ShortenRepository (integration)', () => {
     });
 
     it('should return null when the shortCode does not exist', async () => {
-      const result =
-        await repository.findOneAndIncrementAccess('nonexistent');
+      const result = await repository.findOneAndIncrementAccess('nonexistent');
 
       expect(result).toBeNull();
     });
