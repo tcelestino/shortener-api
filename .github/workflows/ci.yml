@@ -26,7 +26,7 @@ jobs:
         run: npm run prisma:generate
 
       - name: Lint
-        run: npx eslint "{src,apps,libs,test}/**/*.ts"
+        run: npm run lint
 
       - name: Typecheck
         run: npx tsc --noEmit
